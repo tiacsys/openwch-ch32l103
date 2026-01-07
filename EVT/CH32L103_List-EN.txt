@@ -1,5 +1,5 @@
 
-Nanjing Qinheng Microelectronics Co., Ltd. 2025.01
+Nanjing Qinheng Microelectronics Co., Ltd. 2026.01
 Please check our website for the latest information.
 https://wch-ic.com
 
@@ -24,6 +24,7 @@ Directory
   |      |      |      |      |-- Internal_Temperature：internal temperature sensor routine 
   |      |      |      |-- APPLICATION
   |      |      |      |      |-- WS2812_LED: Operating WS2812 via SPI\PWM Routine
+  |      |      |      |      |-- PD_Electric_Fan：electric fan routine
   |      |      |      |-- BKP：BKP routine
   |      |      |      |-- CAN  
   |      |      |      |      |-- CANFD：CANFD normal mode, standard frame, and extended frame data routines

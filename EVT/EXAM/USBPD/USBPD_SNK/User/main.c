@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.2
- * Date               : 2025/02/17
+ * Version            : V1.0.3
+ * Date               : 2025/12/16
  * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -52,8 +52,8 @@ UINT8 PD_TX_BUF[30];
  */
 void TIM1_Init( u16 arr, u16 psc )
 {
-    TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
-    NVIC_InitTypeDef NVIC_InitStructure;
+    TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure = {0};
+    NVIC_InitTypeDef NVIC_InitStructure = {0};
 
     RCC_PB2PeriphClockCmd( RCC_PB2Periph_TIM1, ENABLE );
 

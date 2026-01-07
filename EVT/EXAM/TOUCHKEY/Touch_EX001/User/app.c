@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : app.c
  * Author             : WCH
- * Version            : V1.1
- * Date               : 2025/01/14
+ * Version            : V1.0.2
+ * Date               : 2025/12/16
  * Description        : Touch Key Routines
  *******************************************************************************/
 
@@ -176,8 +176,8 @@ void TKY_dataProcess (void)
 void Timer_Init(void)
 {
     PRINT("%s\r\n", __FUNCTION__);
-    TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
-    NVIC_InitTypeDef NVIC_InitStructure;
+    TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure = {0};
+    NVIC_InitTypeDef NVIC_InitStructure = {0};
 
     RCC_PB1PeriphClockCmd(RCC_PB1Periph_TIM2, ENABLE);
     //--TIMER4--

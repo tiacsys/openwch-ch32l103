@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.1
- * Date               : 2025/04/11
+ * Version            : V1.0.2
+ * Date               : 2025/12/16
  * Description        : Main program body.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -230,7 +230,7 @@ u8 CAN_Send_Msg(u8 *msg, u8 len)
     u8  mbox;
     u16 i = 0;
 
-    CanTxMsg CanTxStructure;
+    CanTxMsg CanTxStructure = {0};
 
     CanTxStructure.ExtId = 0x12124567;
     CanTxStructure.IDE = CAN_Id_Extended;
@@ -301,7 +301,7 @@ u8 CAN_Receive_Msg(u8 *buf)
 {
     u8 i;
 
-    CanRxMsg CanRxStructure;
+    CanRxMsg CanRxStructure = {0};
 
     if(CAN_MessagePending(CAN1, CAN_FIFO0) == 0)
     {

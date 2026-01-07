@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2024/11/05
+ * Version            : V1.0.1
+ * Date               : 2026/01/06
  * Description        : Main program body.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -12,21 +12,29 @@
 
 /*
  *@Note
- *low power, stop mode routine:
- *EXTI_Line0(PA0)
- *This routine demonstrates WFI enters sleep mode, PA0 pin input low level triggers
- *external interrupt EXTI_Line0 exits stop mode,Program execution continues after wake-up.
- *
+ * low power, stop mode routine:
+ * EXTI_Line0(PA0)
+ * This routine demonstrates WFI enters sleep mode, PA0 pin input high level triggers
+ * external interrupt EXTI_Line0 exits stop mode,Program execution continues after wake-up.
+ *@Note
+ * For the small package model of the chip, there are some pins that have not been led out compared to the largest package, 
+ * or some pins that have been packaged but not used. These pins need to be set as pull-down\up inputs to reduce power 
+ * consumption.Please refer to the routine configuration for details. 
  */
 
 #include "debug.h"
 
 /* Global define */
-#define Stop_Regulator_ON    0x00
-#define Regulator_LowPower   0x01
 
-//#define StopMode  Stop_Regulator_ON
-#define StopMode  Regulator_LowPower
+#define STOP_1   1
+#define STOP_2   2
+#define STOP_3   3
+#define STOP_4   4
+
+// #define StopMode  STOP_1
+// #define StopMode  STOP_2
+// #define StopMode  STOP_3
+#define StopMode  STOP_4
 
 /* Global Variable */
 
@@ -46,15 +54,14 @@ void EXTI0_INT_INIT(void)
     RCC_PB2PeriphClockCmd(RCC_PB2Periph_AFIO | RCC_PB2Periph_GPIOA, ENABLE);
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
     /* GPIOA.0 ----> EXTI_Line0 */
     GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource0);
     EXTI_InitStructure.EXTI_Line = EXTI_Line0;
     EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
+    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
     EXTI_InitStructure.EXTI_LineCmd = ENABLE;
     EXTI_Init(&EXTI_InitStructure);
 
@@ -76,41 +83,49 @@ int main(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure = {0};
 
-    /* To reduce power consumption, unused GPIOs need to be set as pull-down inputs */
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+    SystemCoreClockUpdate();
+    Delay_Init();
+	Delay_Ms(1000);
+    Delay_Ms(1000);
+	/* To reduce power consumption, unused GPIOs need to be set as pull-down inputs */
     RCC_PB2PeriphClockCmd(RCC_PB2Periph_GPIOA|RCC_PB2Periph_GPIOB|
-            RCC_PB2Periph_GPIOC|RCC_PB2Periph_GPIOD, ENABLE);
+                          RCC_PB2Periph_GPIOC|RCC_PB2Periph_GPIOD|RCC_PB2Periph_AFIO, ENABLE);
+    GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
+
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
-
     GPIO_Init(GPIOA, &GPIO_InitStructure);
     GPIO_Init(GPIOB, &GPIO_InitStructure);
     GPIO_Init(GPIOC, &GPIO_InitStructure);
     GPIO_Init(GPIOD, &GPIO_InitStructure);
 	
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
-    SystemCoreClockUpdate();
-    Delay_Init();
     USART_Printf_Init(115200);
     printf("SystemClk:%d\r\n", SystemCoreClock);
     printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
     printf("Stop Mode Test\r\n");
     EXTI0_INT_INIT();
 
-    /*close cc1,cc2 pull-down resistors */
+	/*close cc1,cc2 pull-down resistors */
+	RCC_HBPeriphClockCmd(RCC_HBPeriph_USBPD, ENABLE);
     USBPD->PORT_CC1 &= ~(0x01<<1);
     USBPD->PORT_CC2 &= ~(0x01<<1);
 
     RCC_PB1PeriphClockCmd(RCC_PB1Periph_PWR, ENABLE);
     printf("\r\n ********** \r\n");
 
-#if (StopMode == Stop_Regulator_ON)
+#if (StopMode == STOP_1)
+    PWR_EnterSTOPMode(PWR_Regulator_ON, PWR_STOPEntry_WFI);
+#elif(StopMode == STOP_2)
     PWR_STOPMode_Auto_LDO_LP_Cmd(ENABLE);
     PWR_EnterSTOPMode(PWR_Regulator_ON, PWR_STOPEntry_WFI);
-#else
+#elif(StopMode == STOP_3)
     PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
+#elif(StopMode == STOP_4)
+    PWR->CTLR |=(1<<20);
+    PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
+#endif 
     SystemInit();
-#endif
-
     printf("\r\n ########## \r\n");
 
     while(1)

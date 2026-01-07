@@ -13,5 +13,5 @@ Description=ROM(byte): 64K, SRAM(byte): 20K, CHIP PINS: 48, GPIO PORTS: 37.\nCH3
 
 PeripheralVersion=1.0
 Target Path=obj/HOST_IAP.hex
-MCU=CH32L103C8T6
+MCU=CH32L103C8T
 

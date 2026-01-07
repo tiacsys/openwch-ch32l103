@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2023/07/08
+ * Version            : V1.0.1
+ * Date               : 2025/12/16
  * Description        : Main program body.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -64,10 +64,10 @@ void OPA1_Init(void)
  */
 void TIM1_PWM_In( u16 arr, u16 psc, u16 ccp )
 {
-    GPIO_InitTypeDef GPIO_InitStructure;
-    TIM_OCInitTypeDef TIM_OCInitStructure;
-    TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
-    TIM_BDTRInitTypeDef TIM_BDTRInitStructure;
+    GPIO_InitTypeDef GPIO_InitStructure = {0};
+    TIM_OCInitTypeDef TIM_OCInitStructure = {0};
+    TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure = {0};
+    TIM_BDTRInitTypeDef TIM_BDTRInitStructure = {0};
     RCC_PB2PeriphClockCmd( RCC_PB2Periph_GPIOA  | RCC_PB2Periph_GPIOB | RCC_PB2Periph_TIM1 , ENABLE );
 
     /* TIM1_CH1 */
